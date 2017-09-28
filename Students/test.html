@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"> </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        #pop
+        {
+            height: 280px;
+            width:470px;
+            position:fixed;
+
+            right:50%;
+            border:2px solid;
+            padding:10px;
+            background: #FFFFFF;
+            border-radius:9px;
+            top:0;
+            bottom:0;
+            left:20%;
+            margin:auto;
+        }
+        #close
+        {
+            right:5px;
+            top:5px;
+            float:right;
+        }
+        .popNoMore{display:none;}
+        .pop {
+            background: #eee;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            width: 200px;
+            top:50px;left:50px;
+        }
+
+        /* arrows - :before and :after */
+        .pop:before {
+            position: absolute;
+            display: inline-block;
+            border-top: 7px solid transparent;
+            border-right: 7px solid #eee;
+            border-bottom: 7px solid transparent;
+            border-right-color: rgba(0, 0, 0, 0.2);
+            left: -8px;
+            top: 15px;
+            content: '';
+        }
+
+        .pop:after {
+            position: absolute;
+            display: inline-block;
+            border-top: 6px solid transparent;
+            border-right: 6px solid #eee;
+            border-bottom: 6px solid transparent;
+            left: -6px;
+            top: 16px;
+            content: '';
+        }
+    </style>
+</head>
+<body>
+<div class="col-md-6">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="glyphicon glyphicon-circle-arrow-right"></span>Where do you get your news?</h3>
+        </div>
+        <div class="panel-body two-col">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="well well-sm">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" id="button1" name="optionsRadios">
+                                TV
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="well well-sm">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="optionsRadios">
+                                Facebook
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="well well-sm margin-bottom-none">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="optionsRadios">
+                                Radio
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="well well-sm margin-bottom-none">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="optionsRadios">
+                                Newspaper
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button type="button" id="vote" class="btn btn-success btn-sm">
+                <span class="glyphicon glyphicon-ok"></span>Vote</button>
+            <button type="button" class="btn btn-primary btn-sm">
+                View Result</button>
+        </div>
+    </div>
+</div>
+<div id="pop">
+    <button id="close">x</button>
+    <p id="content"> </p>
+    <h3 id="insert"> </h3>
+</div>
+<script>
+    var popup = document.getElementById("pop");
+    popup.style.visibility = "hidden";
+    var vote = document.getElementById("vote");
+    vote.onclick = function() {
+        var popup = document.getElementById("pop");
+        popup.style.visibility = "visible";
+        var response1;
+        var response2;
+        var response3;
+        var follow1;
+        var follow2;
+        var follow3;
+        var question;
+        var active;
+        var counter;
+        var timestamp;
+        console.log("heyo");
+
+        var button1 = document.getElementById("button1");
+        if (button1.checked == true) {
+            var ref = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+        console.log("heyo");
+            ref.on("value", function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+                    if (childSnapshot.child("isActive").val() == "true") {
+                        timestamp = childSnapshot.key();
+                        response1 = childSnapshot.child('Response1').val();
+                        question = childSnapshot.child('Question').val();
+                        follow1 = childSnapshot.child('Follow_Up1').val();
+                        response2 = childSnapshot.child('Response2').val();
+                        follow2 = childSnapshot.child('Follow_Up2').val();
+                        follow3 = childSnapshot.child('Follow_Up3').val();
+                        response3 = childSnapshot.child('Response3').val();
+                        active = childSnapshot.child('isActive').val();
+                        counter = childSnapshot.child("counter").val();
+                    }
+                    else {
+                        //console.log(timestamp);
+                    }
+                });
+                console.log(timestamp);
+
+
+            });
+            var refTime = new Firebase("https://speedpoll-1fd08.firebaseio.com" + "/" + timestamp);
+            //console.log(refTime);
+            refTime.set({
+                Response1: response1,
+                Question: question,
+                Follow_Up1: follow1,
+                Follow_Up2: follow2,
+                Response2: response2,
+                Follow_Up3: follow3,
+                Response3: response3,
+                isActive: active,
+                counter: counter + 1
+            });
+
+            var followUpRef = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+
+            followUpRef.on("value", function (snapshot) {
+                snapshot.forEach(function (childSnapshot) {
+
+                    var key = console.log(childSnapshot.key());
+                    var follow11 = childSnapshot.child('Follow_Up1').val();
+
+                    if (childSnapshot.child("isActive").val() == "true") {
+
+                        if (follow11.indexOf("http") >= 0) {
+                            var para = document.createElement("p");
+                            var node = document.createTextNode("Our recommendation: ");
+                            var a = document.createElement("a");
+                            var linkText = document.createTextNode("Click here to visit: " + follow11);
+                            a.appendChild(linkText);
+                            a.title = "title text";
+                            a.href = follow11;
+                            a.style.textDecoration = "none";
+                            console.log("mama");
+                            var element = document.getElementById("content");
+                            //element.appendChild(node);
+                            element.appendChild(a);
+                        }
+                        else {
+                            console.log(follow11);
+                            var para = document.createElement("p");
+                            var node = document.createTextNode("Here's my advice: " + follow11);
+                            console.log(follow11);
+                            para.appendChild(node);
+                            console.log("mia");
+                            var element = document.getElementById("content");
+                            var button = document.getElementById("radio");
+                            element.style.fontWeight = 'bold';
+                            element.style.color = 'blue';
+                            button.style.fontWeight = 'bold';
+                            button.style.color = 'blue';
+                            element.appendChild(para);
+                        }
+                    }
+                });
+            });
+
+            console.log("Wtf");
+        }
+    }
+
+</script>
+<script>
+var config = {
+apiKey: "AIzaSyDn_8TdtRAV6lbgeqVi6UIaawT7mJMP6MQ",
+authDomain: "speedpoll-1fd08.firebaseapp.com",
+databaseURL: "https://speedpoll-1fd08.firebaseio.com",
+storageBucket: "",
+messagingSenderId: "660277309630"
+};
+firebase.initializeApp(config);
+var Firebase = require("firebase");
+</script>
+</body>
+</html>

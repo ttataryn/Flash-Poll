@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Page</title>
+    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"> </script>
+    <script src="css-pop.js" type="text/javascript"> </script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <style>
+        p{
+            margin-bottom:2px;
+        }
+        a {
+            color: black;
+            text-decoration: none;
+        }
+        #pop
+        {
+            height:345px;
+            width:400px;
+
+            right:50%;
+            border:2px solid;
+            padding:10px;
+            background: gold;
+            border-radius:9px;
+            top:50px;
+            bottom:0;
+            left:50%;
+            margin: auto;
+            margin-top: 10px;
+        }
+        #closeP
+        {
+            right:5px;
+            top:5px;
+            float:right;
+        }
+        .popNoMore{display:none;}
+        .pop {
+            background: #eee;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            width: 400px;
+            top:10px;
+            left:50px;
+        }
+
+        /* arrows - :before and :after */
+        #pop:before {
+            position: absolute;
+            display: inline-block;
+            border-top: 7px solid transparent;
+            border-right: 7px solid #eee;
+            border-bottom: 7px solid transparent;
+            border-right-color: rgba(0, 0, 0, 0.2);
+            left: -8px;
+            top: 0px;
+            content: '';
+        }
+
+        #pop:after {
+            position: absolute;
+            display: inline-block;
+            border-top: 6px solid transparent;
+            border-right: 6px solid #eee;
+            border-bottom: 6px solid transparent;
+            left: -6px;
+            top: 0px;
+            content: '';
+        }
+        .panel-primary {
+            border-color: gold;
+            width:650px;
+            height: 250px;
+            margin-bottom:0px;
+        }
+        .panel-primary > .panel-heading {
+            color: black;
+            background-color: gold;
+            border-color: #337ab7;
+        }
+        #container
+        {
+            margin-top: 10px;
+        }
+        .btn-success {
+            color: #fff;
+            display: block;
+            background-color: #5cb85c;
+            border-color: #4cae4c;
+            width: 200px;
+            margin: 0 auto;
+        }
+          .well {
+            min-height: 5px;
+              height: 60px;
+            padding: 5px;
+            margin-bottom: 1px;
+            background-color: #f5f5f5;
+            border: 1px solid #e3e3e3;
+            border-radius: 4px;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+                    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .05);
+              width:640px;
+          }
+        .panel-body {
+            padding: 2px;
+        }
+        .radio
+        {
+            margin-left: 5px;
+        }
+
+    </style>
+</head>
+<body onload="displayInfo()">
+
+<div id="post"> </div>
+<div id="container"> <!-- contains the entirety of the poll -->
+
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="glyphicon glyphicon-circle-arrow-right"></span><div id="question"></div></h3>
+            </div>
+            <div class="panel-body two-col">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="">
+                            <div class="radio">
+                                <label id="radio">
+                                    <input type="radio" id="button1" name="optionsRadios">
+
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body two-col">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="">
+                            <div class="radio">
+                                <label id="radio2">
+                                    <input type="radio" id="button2" name="optionsRadios">
+
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body two-col">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="">
+                            <div class="radio">
+                                <label id="radio3">
+                                    <input type="radio" id="button3" name="optionsRadios">
+
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <button type="button" id="submit" class="btn btn-success btn-sm" onclick="submit()">
+                    <span class="glyphicon glyphicon-ok"></span>Submit</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<div id="pop">
+    <button id="closeP">x</button> <!-- "X" to close the dialog box -->
+    <p id="content"> </p>
+    <h3 id="insert"> </h3>
+</div>
+
+
+
+<script>
+
+    var popup = document.getElementById("pop");
+    popup.style.visibility = "hidden";
+    var container;
+    var deletebtn1, deletebtn2, deletebtn3, deletesubmit;
+    var question, deleteR1, deleteR2, deleteR3;
+//function displayInfo runs on window load
+    function displayInfo() {
+    //place the contents of each response next to the radio buttons created above
+        var questionRef = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+        questionRef.on("value", function (snapshot) {
+            //runs through each question and checks if it's the active one
+            snapshot.forEach(function (childSnapshot) {
+                // key will be "fred" the first time and "barney" the second time
+                var key = console.log(childSnapshot.key()); // RETURNS question
+                // childData will be the actual contents of the child
+                var response1 = childSnapshot.child('Response1').val();
+                var question1 = childSnapshot.child('Question').val();
+                var follow1 = childSnapshot.child('Follow_Up1').val();
+                var follow2 = childSnapshot.child('Follow_Up2').val();
+                var response2 = childSnapshot.child('Response2').val();
+                var follow3 = childSnapshot.child('Follow_Up3').val();
+                var response3 = childSnapshot.child('Response3').val();
+                //var response1 = console.log(option1.child("Response1").val());
+                var para = document.createElement("p");
+                var para1 = document.createElement("p");
+                var para2 = document.createElement("p");
+                var para3 = document.createElement("p");
+                var node = document.createTextNode("FlashPoll: " + question1);
+                var node1 = document.createTextNode("a) " + response1);
+                var node2 = document.createTextNode("b) " + response2);
+                var node3 = document.createTextNode("c) " + response3);
+                //check if current question is active
+                if (childSnapshot.child('isActive').val() == "true") {
+                    para.appendChild(node);
+                    para1.appendChild(node1);
+                    para2.appendChild(node2);
+                    para3.appendChild(node3);
+                    var question = document.getElementById("question");
+                    question.style.fontWeight = 'bold';
+                    var element = document.getElementById("radio");
+                    var element2 = document.getElementById("radio2");
+                    var element3 = document.getElementById("radio3");
+                    question.appendChild(para);
+                    element.appendChild(para1);
+                    element2.appendChild(para2);
+                    element3.appendChild(para3);
+                }
+            });
+
+        });
+
+    }
+    var button1 = document.getElementById("button1");
+    var button2 = document.getElementById("button2");
+    var button3 = document.getElementById("button3");
+    //disables submit button to ensure user can't click submit without selecting an option
+    if (button1.checked == false && button2.checked == false && button3.checked == false) {
+        document.getElementById("submit").setAttribute("disabled","disabled");
+    }
+
+    //on the click of each radio button, the submit button is enabled
+    button1.onclick = function () {
+            document.getElementById("submit").removeAttribute("disabled");
+    }
+    button2.onclick = function () {
+        document.getElementById("submit").removeAttribute("disabled");
+    }
+    button3.onclick = function () {
+        document.getElementById("submit").removeAttribute("disabled");
+    }
+    //on the click of the submit button retrieve the follow up response and add to the modal
+            var button = document.getElementById("submit");
+            button.onclick = function submit() {
+                var container = document.getElementById("container");
+                deleteR1 = document.getElementById("radio");
+                deleteR2 = document.getElementById("radio2");
+                deleteR3 = document.getElementById("radio3");
+                question = document.getElementById("question");
+                deletebtn1 = document.getElementById("button1");
+                deletebtn2 = document.getElementById("button2");
+                deletebtn3 = document.getElementById("button3");
+                deletesubmit = document.getElementById("submit");
+                deletebtn1.style.visibility = "hidden";
+                deletebtn2.style.visibility = "hidden";
+                deletebtn3.style.visibility = "hidden";
+                deletesubmit.style.visibility = "hidden";
+                question.style.visibility = "hidden";
+                deleteR1.style.visibility = "hidden";
+                deleteR2.style.visibility = "hidden";
+                deleteR3.style.visibility = "hidden";
+                var popup = document.getElementById("pop");
+                popup.style.visibility = "visible";
+                var response1;
+                var response2;
+                var response3;
+                var follow1;
+                var follow2;
+                var follow3;
+                var question;
+                var active;
+                var counterR1;
+                var counterR2;
+                var counterR3;
+                var timestamp;
+                var button1 = document.getElementById("button1");
+                if (button1.checked == true) {
+                    var ref = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+
+                    ref.on("value", function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            if (childSnapshot.child("isActive").val() == "true") {
+                                timestamp = childSnapshot.key();
+                                response1 = childSnapshot.child('Response1').val();
+                                question = childSnapshot.child('Question').val();
+                                follow1 = childSnapshot.child('Follow_Up1').val();
+                                response2 = childSnapshot.child('Response2').val();
+                                follow2 = childSnapshot.child('Follow_Up2').val();
+                                follow3 = childSnapshot.child('Follow_Up3').val();
+                                response3 = childSnapshot.child('Response3').val();
+                                active = childSnapshot.child('isActive').val();
+                                counterR1 = childSnapshot.child("counterR1").val();
+                                counterR2 = childSnapshot.child("counterR2").val();
+                                counterR3 = childSnapshot.child("counterR3").val();
+                            }
+                            else {
+                                //console.log(timestamp);
+                            }
+                        });
+                        console.log(timestamp);
+
+
+                    });
+                    //increment the counter for response 1 (see counterR1) since response 1 was selected
+                    var refTime = new Firebase("https://speedpoll-1fd08.firebaseio.com" + "/" + timestamp);
+                    //console.log(refTime);
+                    refTime.set({
+                        Response1: response1,
+                        Question: question,
+                        Follow_Up1: follow1,
+                        Follow_Up2: follow2,
+                        Response2: response2,
+                        Follow_Up3: follow3,
+                        Response3: response3,
+                        isActive: active,
+                        counterR1: counterR1 + 1,
+                        counterR2: counterR2,
+                        counterR3: counterR3
+                    });
+
+                    var followUpRef = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+
+                    followUpRef.on("value", function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+
+                            var key = console.log(childSnapshot.key());
+                            var follow11 = childSnapshot.child('Follow_Up1').val();
+                            console.log(follow11);
+
+                            if (childSnapshot.child("isActive").val() == "true") {
+
+                                if (follow11.indexOf("http") >= 0) {
+                                    var para = document.createElement("p");
+                                    var start = follow11.indexOf("http");
+                                    console.log(start);
+                                    var end = follow11.lastIndexOf("/");
+                                    var begStart = follow11.substring(0, start);
+                                    console.log(begStart);
+                                    var length = follow11.length;
+                                    var lastChar = length - 1;
+                                    console.log(lastChar);
+                                    console.log(end);
+                                    var startEnd = follow11.substring(end, lastChar);
+                                    var newLink = follow11.substring(start, end);
+                                    var a = document.createElement("a");
+                                    var linkText1 = document.createTextNode(begStart);
+                                    var linkText2 = document.createTextNode(newLink);
+                                    var text = document.createTextNode(startEnd);
+                                    a.appendChild(linkText2);
+                                    a.title = "title text";
+                                    a.href = newLink;
+                                    a.target = "_blank"
+                                    a.style.textDecoration = "underline";
+                                    console.log("mama");
+                                    var element = document.getElementById("content");
+                                    element.style.fontWeight = "bold";
+                                    element.style.textAlign = "center";
+                                    element.style.marginTop = "0px";
+                                    element.style.height = "715px";
+                                    //element.appendChild(node);
+                                    element.appendChild(linkText1);
+                                    element.appendChild(a);
+                                    element.appendChild(text);
+                                }
+                                else {
+                                    console.log(follow11);
+                                    var para = document.createElement("p");
+                                    var node = document.createTextNode(follow11);
+                                    console.log(follow11);
+                                    para.appendChild(node);
+                                    console.log("mia");
+                                    var element = document.getElementById("content");
+                                    var button = document.getElementById("radio");
+                                    element.style.fontWeight = 'bold';
+                                    element.style.color = 'black';
+                                    button.style.fontWeight = 'bold';
+                                    button.style.color = 'black';
+                                    element.style.textAlign = 'center';
+                                    element.style.marginTop = "5px";
+
+                                    element.appendChild(para);
+                                }
+                            }
+                        });
+                    });
+                    var container = document.getElementById("container");
+                    container.parentNode.removeChild(container);
+                    //container.style.visibility = "hidden";
+
+                    var close = document.getElementById("closeP");
+                    //on click of the close button
+                    close.onclick = function () {
+                        //document.getElementById("container").innerHTML = "";
+                        //document.getElementById("display").style.visibility = "hidden";
+                        document.getElementById('pop').style.display = 'none';
+                        var post = document.getElementById("post");
+
+                        var resp = document.createElement("h3");
+                        resp.innerHTML = "Thanks for participating in this poll!";
+                        console.log(resp);
+                        resp.style.textAlign = "center";
+                        post.appendChild(resp);
+
+                    }
+                }
+
+
+                var button2 = document.getElementById("button2");
+                if (button2.checked == true) {
+                    var ref2 = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+
+                    ref2.on("value", function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            if (childSnapshot.child("isActive").val() == "true") {
+                                timestamp = childSnapshot.key();
+                                response1 = childSnapshot.child('Response1').val();
+                                question = childSnapshot.child('Question').val();
+                                follow1 = childSnapshot.child('Follow_Up1').val();
+                                response2 = childSnapshot.child('Response2').val();
+                                follow2 = childSnapshot.child('Follow_Up2').val();
+                                follow3 = childSnapshot.child('Follow_Up3').val();
+                                response3 = childSnapshot.child('Response3').val();
+                                active = childSnapshot.child('isActive').val();
+                                counterR1 = childSnapshot.child("counterR1").val();
+                                counterR2 = childSnapshot.child("counterR2").val();
+                                counterR3 = childSnapshot.child("counterR3").val();
+                            }
+                            else {
+                                //console.log(timestamp);
+                            }
+                        });
+                        console.log(timestamp);
+                    });
+                    var refTime2 = new Firebase("https://speedpoll-1fd08.firebaseio.com" + "/" + timestamp);
+                    //console.log(refTime);
+                    refTime2.set({
+                        Response1: response1,
+                        Question: question,
+                        Follow_Up1: follow1,
+                        Follow_Up2: follow2,
+                        Response2: response2,
+                        Follow_Up3: follow3,
+                        Response3: response3,
+                        isActive: active,
+                        counterR1: counterR1,
+                        counterR2: counterR2 + 1,
+                        counterR3: counterR3
+                    });
+
+                    var followUp2Ref = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+                    followUp2Ref.on("value", function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            var key = childSnapshot.key();
+                            var follow2 = childSnapshot.child('Follow_Up2').val();
+                            //var link = follow2.link(follow2);
+                            if (childSnapshot.child("isActive").val() == "true") {
+                                if (follow2.indexOf("http") >= 0) {
+                                    var para = document.createElement("p");
+                                    var start = follow2.indexOf("http");
+                                    console.log(start);
+                                    var end = follow2.lastIndexOf("/");
+                                    var begStart = follow2.substring(0, start);
+                                    console.log(begStart);
+                                    var length = follow2.length;
+                                    var lastChar = length - 1;
+                                    console.log(lastChar);
+                                    console.log(end);
+                                    var startEnd = follow2.substring(end, lastChar);
+                                    var newLink = follow2.substring(start, end);
+                                    var a = document.createElement("a");
+                                    var linkText1 = document.createTextNode(begStart);
+                                    var linkText2 = document.createTextNode(newLink);
+                                    var text = document.createTextNode(startEnd);
+                                    a.appendChild(linkText2);
+                                    a.title = "title text";
+                                    a.href = newLink;
+                                    a.target = "_blank"
+                                    a.style.textDecoration = "underline";
+                                    console.log("mama");
+                                    var element = document.getElementById("content");
+                                    element.style.fontWeight = "bold";
+                                    element.style.textAlign = "center";
+                                    element.style.marginTop = "0px";
+
+                                    //element.appendChild(node);
+                                    element.appendChild(linkText1);
+                                    element.appendChild(a);
+                                    element.appendChild(text);
+                                }
+                                else {
+                                    var para = document.createElement("p");
+                                    var node = document.createTextNode(follow2);
+                                    console.log(node);
+                                    para.appendChild(node);
+                                    console.log("why?");
+                                    var element = document.getElementById("content");
+                                    var button = document.getElementById("radio");
+                                    element.style.fontWeight = 'bold';
+                                    element.style.color = 'black';
+                                    element.style.textAlign = 'center';
+                                    element.style.marginTop = "30px";
+                                    button.style.fontWeight = 'bold';
+                                    button.style.color = 'black';
+                                    element.appendChild(para);
+                                }
+                            }
+                        });
+                    });
+                    var container = document.getElementById("container");
+                    container.parentNode.removeChild(container);
+                    var close = document.getElementById("closeP");
+                    close.onclick = function () {
+                        //document.getElementById("container").innerHTML = "";
+                        //document.getElementById("display").style.visibility = "hidden";
+                        document.getElementById('pop').style.display = 'none';
+                        var post = document.getElementById("post");
+                        var resp = document.createElement("h3");
+                        resp.innerHTML = "Thanks for participating in this poll!";
+                        console.log(resp);
+                        resp.style.textAlign = "center";
+                        post.appendChild(resp);
+                    }
+                }
+                //if radiobutton is checked, retrieve follow up and display
+
+                var button3 = document.getElementById("button3");
+                if (button3.checked == true) {
+                    var ref3 = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+
+                    ref3.on("value", function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            if (childSnapshot.child("isActive").val() == "true") {
+                                timestamp = childSnapshot.key();
+                                response1 = childSnapshot.child('Response1').val();
+                                question = childSnapshot.child('Question').val();
+                                follow1 = childSnapshot.child('Follow_Up1').val();
+                                response2 = childSnapshot.child('Response2').val();
+                                follow2 = childSnapshot.child('Follow_Up2').val();
+                                follow3 = childSnapshot.child('Follow_Up3').val();
+                                response3 = childSnapshot.child('Response3').val();
+                                active = childSnapshot.child('isActive').val();
+                                counterR1 = childSnapshot.child("counterR1").val();
+                                counterR2 = childSnapshot.child("counterR2").val();
+                                counterR3 = childSnapshot.child("counterR3").val();
+                            }
+                            else {
+                                //console.log(timestamp);
+                            }
+                        });
+                        console.log(timestamp);
+                    });
+                    var refTime3 = new Firebase("https://speedpoll-1fd08.firebaseio.com" + "/" + timestamp);
+                    //console.log(refTime);
+                    refTime3.set({
+                        Response1: response1,
+                        Question: question,
+                        Follow_Up1: follow1,
+                        Follow_Up2: follow2,
+                        Response2: response2,
+                        Follow_Up3: follow3,
+                        Response3: response3,
+                        isActive: active,
+                        counterR1: counterR1,
+                        counterR2: counterR2,
+                        counterR3: counterR3 + 1
+                    });
+                    var followUp3Ref = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+                    followUp3Ref.on("value", function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            var key = childSnapshot.key();
+                            var follow3 = childSnapshot.child('Follow_Up3').val();
+                            if (childSnapshot.child("isActive").val() == "true") {
+                                if (follow3.indexOf("http") >= 0) {
+                                    var para = document.createElement("p");
+
+                                    var num = follow3.split('http').length-1;
+
+                                        var start = follow3.indexOf("http");
+                                        var end = follow3.lastIndexOf("/");
+                                        var newLink = follow3.substring(start, end);
+                                        console.log(newLink);
+
+                                    console.log(start);
+
+                                    console.log(end);
+                                    var begStart = follow3.substring(0, start);
+                                    console.log(begStart);
+                                    var length = follow3.length;
+                                    var lastChar = length - 1;
+                                    console.log(lastChar);
+                                    console.log(end);
+                                    var startEnd = follow3.substring(end, lastChar);
+                                    var newLink = follow3.substring(start, end);
+                                    var a = document.createElement("a");
+                                    var linkText1 = document.createTextNode(begStart);
+                                    var linkText2 = document.createTextNode(newLink);
+                                    var text = document.createTextNode(startEnd);
+                                    a.appendChild(linkText2);
+                                    a.title = "title text";
+                                    a.href = newLink;
+                                    a.target = "_blank"
+                                    a.style.textDecoration = "underline";
+                                    console.log("mama");
+                                    var element = document.getElementById("content");
+                                    element.style.fontWeight = "bold";
+                                    element.style.textAlign = "center";
+                                    element.style.marginTop = "0px";
+
+                                    //element.appendChild(node);
+                                    element.appendChild(linkText1);
+                                    element.appendChild(a);
+                                    element.appendChild(text);
+                                }
+
+                                else {
+                                    var para1 = document.createElement("p");
+                                    var para2 = document.createElement("p");
+                                    var start1 = follow3.indexOf("The");
+                                    var end1 = follow3.lastIndexOf("This");
+                                    var start2 = follow3.indexOf("This");
+                                    var end2 = follow3.lastIndexOf("Monday");
+                                    var start3 = follow3.indexOf("Monday");
+                                    var end3 = follow3.lastIndexOf("Friday");
+                                    var start4 = follow3.indexOf("Friday");
+                                    var end4 = follow3.indexOf("6 p.m.");
+                                    var firstLine = follow3.substring(start1, end1);
+                                    var secondLine = follow3.substring(start2, end2);
+                                    var thirdLine = follow3.substring(start3, end3);
+                                    var fourthLine = follow3.substring(start4, end4);
+                                    var node = document.createTextNode(firstLine);
+                                    var node2 = document.createTextNode(secondLine);
+                                    var node3 = document.createTextNode(thirdLine);
+                                    var node4 = document.createTextNode(fourthLine + " p.m.");
+                                    var space1 = document.createElement("br");
+                                    var space2 = document.createElement("br");
+                                    var space3 = document.createElement("br");
+                                    console.log(node);
+                                    para1.appendChild(node);
+                                    para2.appendChild(space1);
+                                    para2.appendChild(node2);
+                                    para2.appendChild(space2);
+                                    para2.appendChild(node3);
+                                    para2.appendChild(space3);
+                                    para2.appendChild(node4);
+
+                                    para1.style.fontWeight = "bold";
+                                    para1.style.textAlign = "center";
+                                    para2.style.textAlign = "center";
+
+                                    console.log("why?");
+                                    var element = document.getElementById("content");
+                                    var button = document.getElementById("radio");
+                                    /*element.style.fontWeight = 'bold';
+                                    element.style.color = 'black';
+                                    element.style.textAlign = 'center';*/
+                                    element.style.marginTop = "15px";
+                                    button.style.fontWeight = 'bold';
+                                    button.style.color = 'black';
+                                    var start1 = follow3.indexOf("follows:");
+                                    var end1 = follow3.lastIndexOf("This");
+
+                                    var newLink = follow3.substring(start, end);
+
+                                    element.appendChild(para1);
+                                    element.appendChild(para2);
+                                }
+                            }
+                        });
+                    });
+                    var container = document.getElementById("container");
+                    container.parentNode.removeChild(container);
+                    var close = document.getElementById("closeP");
+                    close.onclick = function () {
+                        //document.getElementById("container").innerHTML = "";
+                        //document.getElementById("display").style.visibility = "hidden";
+                        document.getElementById('pop').style.display = 'none';
+                        var post = document.getElementById("post");
+
+                        var resp = document.createElement("h3");
+                        resp.innerHTML = "Thanks for participating in this poll!";
+                        console.log(resp);
+                        resp.style.textAlign = "center";
+                        post.appendChild(resp);
+
+                    }
+                }
+                else if (button3.checked == false && button2.checked == false && button1.checked == false) {
+                    console.log("hello");
+                    document.getElementById('btn1').setAttribute("disabled", "disabled");
+                    var para = document.createElement("p");
+                    var node = document.createTextNode("Oops. You need to select an option before submitting. Please close this to refresh the page. ");
+                    para.appendChild(node);
+                    var element = document.getElementById("insert");
+                    element.appendChild(para);
+                    var close = document.getElementById("closeP");
+                    close.onclick = function () {
+                        document.getElementById('pop').style.display = 'none';
+                        console.log("hello");
+                        location.reload();
+                    }
+                }
+            }
+
+
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyDn_8TdtRAV6lbgeqVi6UIaawT7mJMP6MQ",
+        authDomain: "speedpoll-1fd08.firebaseapp.com",
+        databaseURL: "https://speedpoll-1fd08.firebaseio.com",
+        storageBucket: "",
+        messagingSenderId: "660277309630"
+    };
+    firebase.initializeApp(config);
+    var Firebase = require("firebase");
+</script>
+
+</html>

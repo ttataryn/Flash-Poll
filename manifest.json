@@ -1,0 +1,7 @@
+{
+  "name": "SpeedPoll",
+  "short_name": "SpeedPoll",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait"
+}

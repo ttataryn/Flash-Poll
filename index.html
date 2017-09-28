@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SpeedPoll-Admin</title>
+    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"> </script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.1/firebase.js"></script>
+    <script src="http://www.datejs.com/build/date.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="mystyle.css">
+</head>
+<body onload="func1()">
+<style>
+    .container input{
+        margin-bottom: 15px;
+        width:100%;
+        clear:both;
+    }
+    .container
+    {
+        width:500px;
+        clear:both;
+    }
+    #all
+    {
+        margin-top:2px;
+        margin-bottom:10px;
+
+    }
+    #sub{
+        margin-bottom:20px;
+        font-weight:bold;
+    }
+
+</style>
+<h1> Click <a href="Students/index.html"> Here </a></h1>
+<h1> Click <a href="Students/test.html"> Aqui</A></a></h1>
+<center><h3> Create a new poll:</h3> </center>
+<!--<div class="container">
+Enter the Question: <input type="text" id="question"> <br>
+Response 1: <input type="text" id="response1"> <br>
+Response 2: <input type="text" id="response2"> <br>
+Response 3: <input type="text" id="response3"> <br>
+Follow Up 1: <input type="text" id="follow1"style="height: 100px;"> <br>
+Follow Up 2: <input type="text" id="follow2"style="height: 100px;"> <br>
+Follow Up 3: <input type="text" id="follow3"style="height: 100px;"> <br>
+<button id="sub" onclick="addFB()"> Submit </button>
+    </div>-->
+<div class="box">
+    <form>
+        <ul class="form-style-1">
+            <li><label>Question <span class="required">*</span></label>
+                <input type="text" name="field2" id="question" class="field-long" placeholder="Enter Your Question">
+            </li>
+            <li>
+                <label>Response 1 <span class="required">*</span></label>
+                <input type="text" name="field3" id="response1"class="field-long" placeholder="Enter your first response to the poll" />
+            </li>
+            <li>
+                <label>Response 2 <span class="required">*</span></label>
+                <input type="text" name="field3" id="response2"class="field-long" placeholder="Enter your second response to the poll" />
+            </li>
+            <li>
+                <label>Response 3 <span class="required">*</span></label>
+                <input type="text" name="field3" id="response3" class="field-long" placeholder="Enter your third response to the poll" />
+            </li>
+            <li>
+                <label>Subject</label>
+                <select name="field4" class="field-select">
+                    <option value="Advertise">Advertise</option>
+                    <option value="Partnership">Partnership</option>
+                    <option value="General Question">General</option>
+                </select>
+            </li>
+            <li>
+                <label> Follow Up 1 <span class="required">*</span></label>
+                <textarea name="field5" id="follow1" class="field-long field-textarea" placeholder="Enter your follow up to response 1"></textarea>
+            </li>
+            <li>
+                <label> Follow Up 2 <span class="required">*</span></label>
+                <textarea name="field5" id="follow2" class="field-long field-textarea" placeholder="Enter your follow up to response 2"></textarea>
+            </li>
+            <li>
+                <label> Follow Up 3 <span class="required">*</span></label>
+                <textarea name="field5" id="follow3" class="field-long field-textarea" placeholder="Enter your follow up to response 3"></textarea>
+            </li>
+            <li>
+                <input type="submit" value="Submit" id="sub" onclick="addFB()" />
+            </li>
+        </ul>
+    </form>
+</div>
+    <center> <h4 id="submitted"> Your input has been submitted to the database. Please refresh to create more content or View all your content below. </h4> </center>
+
+<script>
+
+    var upvotesRef = new Firebase('https://speedpoll-1fd08.firebaseio.com');
+    upvotesRef.transaction(function (current_value) {
+        console.log((current_value || 0) + 1);
+    });
+    document.getElementById("submitted").style.visibility = "hidden";
+
+    /*rootRef = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+    var ex = window.location.search.split("ijt=")[1];
+    console.log(ex);
+     "December 3 2016, Time: 3:30:32 PM"*/
+    rootRef = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+    var ref1 = rootRef.child("December 3 2016, Time: 3:30:38 PM");
+    var ref2= ref1.child("userid");
+    var counter;
+    var exists;
+    function func1()
+    {
+        var ex = window.location.search.split("ijt=")[1];
+
+        var i;
+
+
+            ref2.on("value", function (snapshot) {
+                //runs through every question in the database and dispays it
+                snapshot.forEach(function (childSnapshot) {
+                    for (i = 1; i < 20; i++) {
+                        if(childSnapshot.val() == "unused") {
+
+                            var somethingDynamic = i;
+
+                            var someData = {};
+
+
+                            someData['id' + somethingDynamic] = ex;
+                            ref2.update(someData);
+                            
+                        }
+                    }
+                });
+        });
+    }
+    /*function func1() {
+        counter = 0;
+        exists = false;
+    }
+    func();
+    function func() {
+        console.log(ref2);
+        var child;
+        var path;
+        ref2.on("value", function (snapshot) {
+            //runs through every question in the database and dispays it
+            snapshot.forEach(function (childSnapshot) {
+                child = childSnapshot.val();
+                path = child.child("id");
+            })
+            });
+        ref2.on("value", function (snapshot) {
+            //runs through every question in the database and dispays it
+            snapshot.forEach(function (childSnapshot) {
+                if (path.childSnapshot.val() == "NA") {
+                    console.log("NA");
+
+                }
+                else
+                    console.log("something");
+
+
+            });
+
+        });
+    }*/
+    console.log(exists);
+
+   /* function function1(){
+        if(exists = true) {
+            counter++;
+
+        }
+        if(ref2.child("id" + (counter + 1)) == null)
+        {
+            console.log("hi");
+            var i;
+            for (i = 1; i < counter; i++) {
+                console.log('hello');
+                ref2.child("id" + i).set({id: 5});
+            }
+        }
+
+        console.log(counter);
+
+    }
+    func2();
+    console.log("hi");
+    function func2() {
+
+        console.log('hello');
+        var num = counter;
+        var i;
+        for (i = 1; i < num; i++) {
+            console.log('hello');
+            ref2.child("id" + i).set({id: 4});
+        }
+    }
+*/
+
+    function addFB() {
+
+
+        var response1 = document.getElementById("response1");
+        var response2 = document.getElementById("response2");
+        var response3 = document.getElementById("response3");
+        var follow1 = document.getElementById("follow1");
+        var follow2 = document.getElementById("follow2");
+        var follow3 = document.getElementById("follow3");
+        var question = document.getElementById("question");
+        var response1 = document.getElementById("response1");
+        var monthNames = [
+            "January", "February", "March",
+            "April", "May", "June", "July",
+            "August", "September", "October",
+            "November", "December"
+        ];
+        var date = new Date();
+        var day = date.getDate();
+        var monthIndex = date.getMonth();
+        var year = date.getFullYear();
+        var check =monthNames[monthIndex]+ " "+ day + " " + year;
+        check.toString();
+        console.log(check);
+        var nd = "Time: ";
+        nd += new Date().toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
+        console.log(nd);
+        rootRef.child(check + ", " + nd).set({
+                Question: question.value,
+                Follow_Up1: follow1.value,
+                Response1: response1.value,
+                Follow_Up2: follow2.value,
+                Response2: response2.value,
+                Follow_Up3: follow3.value,
+                Response3: response3.value,
+                isActive: "false",
+                counterR1: 0,
+                counterR2: 0,
+                counterR3:0,
+            });
+
+        response1.value = "";
+        response2.value = "";
+        response3.value = "";
+        follow1.value = "";
+        follow2.value = "";
+        follow3.value = "";
+        question.value = "";
+
+        document.getElementById("submitted").style.visibility = "visible";
+    }
+</script>
+<hr>
+<center><h4> Click the button below to view all Questions, Responses, and Follow-Ups </h4> </center>
+<center><h5> (To update, simply click update, and an input box will appear at the bottom of the page) </h5> </center>
+<center> <button id="all" onclick="button()"> View All</button> </center>
+<hr>
+<center> <h4 id="content"> All Content: </h4> </center>
+
+<script>
+    var content = document.getElementById("content");
+    content.style.visibility = "hidden";
+</script>
+<script>
+
+    //button() will display each question and all of it's content (responses, follow ups, the timestamp, counter, etc,)
+    function button(){
+        var content = document.getElementById("content");
+        content.style.visibility = "visible";
+        var userRef = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+        userRef.on("value", function(snapshot) {
+            //runs through every question in the database and dispays it
+            snapshot.forEach(function(childSnapshot) {
+                // key will be "fred" the first time and "barney" the second time
+                var key = console.log(childSnapshot.key());
+                // childData will be the actual contents of the child
+                var element= document.getElementById("viewAll");
+                var show = document.getElementById("show");
+                var para = document.createElement("p");
+                var timeStamp = document.createTextNode("Date Created: " + childSnapshot.key());
+                var firstSpace = document.createElement("br");
+                var secondSpace = document.createElement("br");
+                var node = document.createElement("h4");
+                node.innerHTML= "Question: " + childSnapshot.child("Question").val();
+                node.style.textAlign = "center";
+                var qButton = document.createElement("button");
+                qButton.type= "button";
+                qButton.innerHTML = "Update";
+                qButton.style.marginLeft = "10px";
+                qButton.style.fontWeight = "bold";
+                qButton.style.display = "block";
+                qButton.style.margin = "0 auto";
+                var space = document.createElement("br");
+                console.log(childSnapshot.child("Response1").val());
+                var node1= document.createTextNode("Response 1: " + childSnapshot.child("Response1").val());
+                var rButton = document.createElement("button");
+                rButton.type= "button";
+                rButton.innerHTML = "Update";
+                rButton.style.marginLeft = "10px";
+                rButton.style.fontWeight = "bold";
+                var spacer = document.createElement("br");
+                var spacerB = document.createElement("br");
+                var hr = document.createElement("hr");
+                hr.style.marginTop = "10px";
+                hr.style.marginBottom = "10px";
+                hr.style.height = "3px";
+                hr.style.backgroundColor= "black";
+                var follow1 = document.createTextNode(" -- " + "Follow Up 1: " + childSnapshot.child("Follow_Up1").val());
+                var fButton1 = document.createElement("button");
+                fButton1.type= "button";
+                fButton1.innerHTML = "Update";
+                fButton1.style.marginLeft = "10px";
+                fButton1.style.fontWeight = "bold";
+                //fButton1.style.backgroundColor = "white";
+                var space1 = document.createElement("br");
+                var node2= document.createTextNode("Response 2: " + childSnapshot.child('Response2').val());
+                var spacer2 = document.createElement("br");
+                var rButton2 = document.createElement("button");
+                rButton2.type= "button";
+                rButton2.innerHTML = "Update";
+                rButton2.style.marginLeft = "10px";
+                rButton2.style.fontWeight = "bold";
+                var follow2 = document.createTextNode(" -- " + "Follow Up 2: " + childSnapshot.child('Follow_Up2').val());
+                var fButton2 = document.createElement("button");
+                fButton2.type= "button";
+                fButton2.innerHTML = "Update";
+                fButton2.style.marginLeft = "10px";
+                fButton2.style.fontWeight = "bold";
+                var space2 = document.createElement("br");
+                var node3= document.createTextNode("Response 3: " + childSnapshot.child('Response3').val());
+                var rButton3 = document.createElement("button");
+                rButton3.type= "button";
+                rButton3.innerHTML = "Update";
+                rButton3.style.marginLeft = "10px";
+                rButton3.style.fontWeight = "bold";
+                var spacer3 = document.createElement("br");
+                var follow3 = document.createTextNode(" -- " + "Follow Up 3: " + childSnapshot.child('Follow_Up3').val());
+                var deleteBtn = document.createElement("button");
+                deleteBtn.type= "button";
+                deleteBtn.innerHTML = "Delete this question";
+                deleteBtn.style.marginLeft = "10px";
+                deleteBtn.style.fontStyle = "italic";
+                var deleteSP = document.createElement("br");
+                var active = document.createTextNode("Status: " + childSnapshot.child('isActive' ).val());
+                var countR1 = document.createTextNode("Number of hits for response 1: " + childSnapshot.child('counterR1').val());
+                var resetCount1 = document.createElement("button");
+                resetCount1.type= "button";
+                resetCount1.innerHTML = "Reset the counter";
+                resetCount1.style.marginLeft = "10px";
+                resetCount1.style.fontStyle = "italic";
+                var countersp1 = document.createElement("br");
+                var countR2 = document.createTextNode("Number of hits for response 2: " + childSnapshot.child('counterR2').val());
+                var resetCount2 = document.createElement("button");
+                resetCount2.type= "button";
+                resetCount2.innerHTML = "Reset the counter";
+                resetCount2.style.marginLeft = "10px";
+                resetCount2.style.fontStyle = "italic";
+                var countersp2 = document.createElement("br");
+                var countersp3 = document.createElement("br");
+                var countR3 = document.createTextNode("Number of hits for response 3: " + childSnapshot.child('counterR3').val());
+                var resetCount3 = document.createElement("button");
+                resetCount3.type= "button";
+                resetCount3.innerHTML = "Reset the counter";
+                resetCount3.style.marginLeft = "10px";
+                resetCount3.style.fontStyle = "italic";
+                var activesp = document.createElement("br");
+                var fButton3 = document.createElement("button");
+                fButton3.type= "button";
+                fButton3.innerHTML = "Update";
+                fButton3.style.marginLeft = "10px";
+                fButton3.style.fontWeight = "bold";
+                var spaceA = document.createElement("br");
+                var spaceA2 = document.createElement("br");
+                var aButton = document.createElement("button");
+                aButton.type= "button";
+                aButton.innerHTML = "Click to set as Active Question";
+                aButton.style.marginLeft = "10px";
+                aButton.style.fontWeight = "bold";
+                aButton.style.margin= "auto";
+                var dButton = document.createElement("button");
+                dButton.type= "button";
+                dButton.innerHTML = "Click to deactivate this Question";
+                dButton.style.marginLeft = "10px";
+                dButton.style.fontWeight = "bold";
+                dButton.style.margin= "auto";
+                var para2 = document.createElement("p");
+                para2.style.textAlign = "center";
+                para.appendChild(timeStamp);
+                para.appendChild(firstSpace);
+                para.appendChild(secondSpace);
+                para.appendChild(node);
+                para.appendChild(qButton);
+                para.appendChild(space);
+                para.appendChild(spacerB);
+                para.appendChild(node1);
+                para.appendChild(rButton);
+                para.appendChild(spacer);
+                para.appendChild(follow1);
+                para.appendChild(fButton1);
+                para.appendChild(space1);
+                para.appendChild(node2);
+                para.appendChild(rButton2);
+                para.appendChild(spacer2);
+                para.appendChild(follow2);
+                para.appendChild(fButton2);
+                para.appendChild(space2);
+                para.appendChild(node3);
+                para.appendChild(rButton3);
+                para.appendChild(spacer3);
+                para.appendChild(follow3);
+                para.appendChild(fButton3);
+                para.appendChild(activesp);
+                para.appendChild(active);
+                para.appendChild(countR1);
+                para.appendChild(resetCount1);
+                para.appendChild(countersp1);
+                para.appendChild(countR2);
+                para.appendChild(resetCount2);
+                para.appendChild(countersp2);
+                para.appendChild(countR3);
+                para.appendChild(resetCount3);
+                para.appendChild(countersp3);
+                para.appendChild(active);
+                para2.appendChild(spaceA);
+                para2.appendChild(spaceA2);
+                para2.appendChild(deleteBtn);
+                para2.appendChild(deleteSP);
+                if (childSnapshot.child("isActive").val() == "false") {
+                    para2.appendChild(aButton);
+                }
+                else if(childSnapshot.child("isActive").val()== "true"){
+                    para2.appendChild(dButton);
+                }
+                para2.appendChild(hr);
+                element.appendChild(para);
+                element.appendChild(para2);
+                //qButton will allow the admin to update the question
+                qButton.onclick = function() {
+                    show.style.visibility = "visible";
+                    var inputQ = document.createElement("input");
+                    inputQ.style.marginRight = "5px";
+                    var updateQ = document.getElementById("update");
+                    var paraQ = document.createElement("p");
+                    paraQ.appendChild(inputQ);
+                    updateQ.appendChild(paraQ);
+                    var updateBtnQ = document.createElement("button");
+                    updateBtnQ.innerHTML = "Enter";
+                    updateBtnQ.onclick = function () {
+                        var inputValueQ = inputQ.value;
+                        var refQ = userRef.child(childSnapshot.key());
+                        refQ.set({
+                            Response1: childSnapshot.child('Response1').val(),
+                            Question: inputValueQ,
+                            Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                            Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                            Response2: childSnapshot.child('Response2').val(),
+                            Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                            Response3: childSnapshot.child('Response3').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: childSnapshot.child("counterR1").val(),
+                            counterR2: childSnapshot.child("counterR2").val(),
+                            counterR3: childSnapshot.child("counterR3").val()
+                        });
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "Your update has been completed. Please refresh the page to update an element again.";
+                        resp.appendChild(header);
+                        inputQ.style.visibility = "hidden";
+                        show.style.visibility = "hidden";
+                        updateBtnQ.style.visibility  = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+
+                    }
+                    paraQ.appendChild(inputQ);
+                    paraQ.appendChild(updateBtnQ);
+                    updateQ.appendChild(paraQ);
+                }
+                //rButton, rButton2 and 3 will allow you to update the response
+                rButton.onclick = function() {
+                    show.style.visibility = "visible";
+                    var inputR1 = document.createElement("input");
+                    inputR1.style.marginRight = "5px";
+                    var updateR = document.getElementById("update");
+                    var paraR = document.createElement("p");
+                    paraR.appendChild(inputR1);
+                    updateR.appendChild(paraR);
+                    var updateBtnR1 = document.createElement("button");
+                    updateBtnR1.innerHTML = "Enter";
+                    updateBtnR1.onclick = function () {
+                        var inputValueR1 = inputR1.value;
+                        var refR1 = userRef.child(childSnapshot.key());
+                        refR1.set({
+                            Response1: inputValueR1,
+                            Question: childSnapshot.child('Question').val(),
+                            Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                            Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                            Response2: childSnapshot.child('Response2').val(),
+                            Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                            Response3: childSnapshot.child('Response3').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: childSnapshot.child("counterR1").val(),
+                            counterR2: childSnapshot.child("counterR2").val(),
+                            counterR3: childSnapshot.child("counterR3").val()
+                        });
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "Your update has been completed. Please refresh the page to update an element again.";
+                        resp.appendChild(header);
+                        inputR1.value = "";
+                        show.style.visibility = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+
+                    }
+                    paraR.appendChild(inputR1);
+                    paraR.appendChild(updateBtnR1);
+                    updateR.appendChild(paraR);
+                }
+                rButton2.onclick = function() {
+                    show.style.visibility = "visible";
+                    var inputR2 = document.createElement("input");
+                    inputR2.style.marginRight = "5px";
+                    var updateR2 = document.getElementById("update");
+                    var paraR2 = document.createElement("p");
+                    paraR2.appendChild(inputR2);
+                    updateR2.appendChild(paraR2);
+                    var updateBtnR2 = document.createElement("button");
+                    updateBtnR2.innerHTML = "Enter";
+                    updateBtnR2.onclick = function () {
+                        var inputValueR2 = inputR2.value;
+                        var refR2 = userRef.child(childSnapshot.key());
+                        refR2.set({
+                            Response2: inputValueR2,
+                            Question: childSnapshot.child('Question').val(),
+                            Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                            Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                            Response1: childSnapshot.child('Response1').val(),
+                            Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                            Response3: childSnapshot.child('Response3').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: childSnapshot.child("counterR1").val(),
+                            counterR2: childSnapshot.child("counterR2").val(),
+                            counterR3: childSnapshot.child("counterR3").val()
+                        });
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "Your update has been completed. Please refresh the page to update an element again.";
+                        resp.appendChild(header);
+                        inputR2.value = "";
+                        show.style.visibility = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+
+                    }
+                    paraR2.appendChild(inputR2);
+                    paraR2.appendChild(updateBtnR2);
+                    updateR2.appendChild(paraR2);
+                }
+                rButton3.onclick = function() {
+                    show.style.visibility = "visible";
+                    var inputR3 = document.createElement("input");
+                    inputR3.style.marginRight = "5px";
+                    var updateR3 = document.getElementById("update");
+                    var paraR3 = document.createElement("p");
+                    paraR3.appendChild(inputR3);
+                    updateR3.appendChild(paraR3);
+                    var updateBtnR3 = document.createElement("button");
+                    updateBtnR3.innerHTML = "Enter";
+                    updateBtnR3.onclick = function () {
+                        var inputValueR3 = inputR3.value;
+                        var refR3 = userRef.child(childSnapshot.key());
+                        refR3.set({
+                            Response3: inputValueR3,
+                            Question: childSnapshot.child('Question').val(),
+                            Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                            Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                            Response1: childSnapshot.child('Response1').val(),
+                            Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                            Response2: childSnapshot.child('Response2').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: childSnapshot.child("counterR1").val(),
+                            counterR2: childSnapshot.child("counterR2").val(),
+                            counterR3: childSnapshot.child("counterR3").val()
+                        });
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "Your update has been completed. Please refresh the page to update an element again.";
+                        resp.appendChild(header);
+                        inputR3.value = "";
+                        show.style.visibility = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+
+                    }
+                    paraR3.appendChild(inputR3);
+                    paraR3.appendChild(updateBtnR3);
+                    updateR3.appendChild(paraR3);
+                }
+                //update the follow ups
+                fButton1.onclick = function(){
+                    show.style.visibility = "visible";
+                    var input = document.createElement("input");
+                    input.style.marginRight = "5px";
+                    var update = document.getElementById("update");
+                    var para = document.createElement("p");
+                    para.appendChild(input);
+                    update.appendChild(para);
+                    var updateBtn = document.createElement("button");
+                    updateBtn.innerHTML = "Enter";
+                    updateBtn.style.fontWeight = "bold";
+                    updateBtn.onclick = function(){
+                        var inputValue = input.value;
+                        var ref = userRef.child(childSnapshot.key());
+                        ref.set({
+                            Follow_Up1: inputValue,
+                            Response1: childSnapshot.child('Response1').val(),
+                            Question: childSnapshot.child('Question').val(),
+                            Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                            Response2: childSnapshot.child('Response2').val(),
+                            Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                            Response3: childSnapshot.child('Response3').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: childSnapshot.child("counterR1").val(),
+                            counterR2: childSnapshot.child("counterR2").val(),
+                            counterR3: childSnapshot.child("counterR3").val()
+                        });
+                    }
+                    para.appendChild(input);
+                    para.appendChild(updateBtn);
+                    update.appendChild(para);
+                }
+                fButton2.onclick = function(){
+                    show.style.visibility = "visible";
+                    var input2 = document.createElement("input");
+                    input2.style.marginRight = "5px";
+                    var update2 = document.getElementById("update");
+                    var para2 = document.createElement("p");
+                    para2.appendChild(input2);
+                    update2.appendChild(para2);
+                    var updateBtn2 = document.createElement("button");
+                    updateBtn2.innerHTML = "Enter";
+                    updateBtn2.onclick = function(){
+                        var inputValue2 = input2.value;
+                        var ref2 = userRef.child(childSnapshot.key());
+                        ref2.set({
+                            Follow_Up2: inputValue2,
+                            Response1: childSnapshot.child('Response1').val(),
+                            Question: childSnapshot.child('Question').val(),
+                            Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                            Response2: childSnapshot.child('Response2').val(),
+                            Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                            Response3: childSnapshot.child('Response3').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: childSnapshot.child("counterR1").val(),
+                            counterR2: childSnapshot.child("counterR2").val(),
+                            counterR3: childSnapshot.child("counterR3").val()
+                        });
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "Your update has been completed. Please refresh the page to update an element again.";
+                        resp.appendChild(header);
+                        input2.value = "";
+                        show.style.visibility = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+
+                    }
+                    para2.appendChild(input2);
+                    para2.appendChild(updateBtn2);
+                    update2.appendChild(para2);
+                }
+                fButton3.onclick = function(){
+                    show.style.visibility = "visible";
+                    var input3 = document.createElement("input");
+                    input3.style.marginRight = "5px";
+                    var update3 = document.getElementById("update");
+                    var para3 = document.createElement("p");
+                    para3.appendChild(input3);
+                    update3.appendChild(para3);
+                    var updateBtn3 = document.createElement("button");
+                    updateBtn3.innerHTML = "Enter";
+                    updateBtn3.onclick = function(){
+                        var inputValue3 = input3.value;
+                        var ref3 = userRef.child(childSnapshot.key());
+                        ref3.set({
+                            Follow_Up3: inputValue3,
+                            Response1: childSnapshot.child('Response1').val(),
+                            Question: childSnapshot.child('Question').val(),
+                            Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                            Response2: childSnapshot.child('Response2').val(),
+                            Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                            Response3: childSnapshot.child('Response3').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: childSnapshot.child("counterR1").val(),
+                            counterR2: childSnapshot.child("counterR2").val(),
+                            counterR3: childSnapshot.child("counterR3").val()
+                        });
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "Your update has been completed. Please refresh the page to update an element again.";
+                        resp.appendChild(header);
+                        input3.value = "";
+                        show.style.visibility = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+                    }
+
+                    para3.appendChild(input3);
+                    para3.appendChild(updateBtn3);
+                    update3.appendChild(para3);
+                }
+                //aButton allows you to activate a certain question (set to Active)
+                aButton.onclick = function() {
+                    var refA = userRef.child(childSnapshot.key());
+                    var refB = childSnapshot.child("Question").val();
+                    console.log(refA);
+                    var ref = new Firebase("https://speedpoll-1fd08.firebaseio.com");
+                    ref.on("value", function (snapshot) {
+                        snapshot.forEach(function (childSnapshot) {
+                            var current = childSnapshot.child("Question").val();
+                            var currentRef= ref.child(childSnapshot.key());
+                            console.log(current);
+                            if(refB == current)
+                            {
+                                console.log("next");
+                                refA.set({
+                                    Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                                    Response1: childSnapshot.child('Response1').val(),
+                                    Question: childSnapshot.child('Question').val(),
+                                    Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                                    Response2: childSnapshot.child('Response2').val(),
+                                    Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                                    Response3: childSnapshot.child('Response3').val(),
+                                    isActive: "true",
+                                    counterR1: childSnapshot.child("counterR1").val(),
+                                    counterR2: childSnapshot.child("counterR2").val(),
+                                    counterR3: childSnapshot.child("counterR3").val()
+                                });
+                            }
+                            else if (childSnapshot.child("isActive").val()=="true")
+                            {
+                                currentRef.set({
+                                    Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                                    Response1: childSnapshot.child('Response1').val(),
+                                    Question: childSnapshot.child('Question').val(),
+                                    Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                                    Response2: childSnapshot.child('Response2').val(),
+                                    Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                                    Response3: childSnapshot.child('Response3').val(),
+                                    isActive: "false",
+                                    counterR1: childSnapshot.child("counterR1").val(),
+                                    counterR2: childSnapshot.child("counterR2").val(),
+                                    counterR3: childSnapshot.child("counterR3").val()
+                                });
+                                console.log("changed");
+                            }
+
+                            else {
+                                console.log("fr");
+                            }
+                        });
+                    });
+                    document.getElementById("viewAll").innerHTML = '';
+                    var resp = document.getElementById("viewAll");
+                    var header = document.createElement("h4");
+                    header.innerHTML = "Your update has been completed. Please refresh the page to update an element again.";
+                    resp.appendChild(header);
+                    show.style.visibility = "hidden";
+                    document.getElementById("content").style.visibility = "hidden";
+                }
+                //deactivate a question if it is active
+                dButton.onclick = function() {
+
+                    var refD = userRef.child(childSnapshot.key());
+                    refD.set({
+                        Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                        Response1: childSnapshot.child('Response1').val(),
+                        Question: childSnapshot.child('Question').val(),
+                        Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                        Response2: childSnapshot.child('Response2').val(),
+                        Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                        Response3: childSnapshot.child('Response3').val(),
+                        isActive: "false",
+                        counterR1: childSnapshot.child("counterR1").val(),
+                        counterR2: childSnapshot.child("counterR2").val(),
+                        counterR3: childSnapshot.child("counterR3").val()
+                    });
+                    document.getElementById("viewAll").innerHTML = '';
+                    var resp = document.getElementById("viewAll");
+                    var header = document.createElement("h4");
+                    header.innerHTML = "The question has been deactivated. Please refresh to activate a different question. ";
+                    resp.appendChild(header);
+                    show.style.visibility = "hidden";
+                    document.getElementById("content").style.visibility = "hidden";
+                }
+                deleteBtn.onclick = function() {
+                    //option to delete a question
+                    var r = confirm("Are you sure?");
+                    if( r == true) {
+                        userRef.child(childSnapshot.key()).remove();
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "The question has been deleted. Please refresh to view other questions or create another poll! ";
+                        resp.appendChild(header);
+
+                        show.style.visibility = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+                    }
+                }
+                resetCount1.onclick = function() {
+                    var c = confirm("Are you sure?");
+                    if( c == true) {
+                        var refC = userRef.child(childSnapshot.key());
+                        refC.set({
+                            Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                            Response1: childSnapshot.child('Response1').val(),
+                            Question: childSnapshot.child('Question').val(),
+                            Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                            Response2: childSnapshot.child('Response2').val(),
+                            Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                            Response3: childSnapshot.child('Response3').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: 0,
+                            counterR2: childSnapshot.child("counterR2").val(),
+                            counterR3: childSnapshot.child("counterR3").val()
+                        });
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "The question has been deleted. Please refresh to view other questions or create another poll! ";
+                        resp.appendChild(header);
+
+                        show.style.visibility = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+                    }
+                }
+                resetCount2.onclick = function() {
+                    var c2 = confirm("Are you sure?");
+                    if( c2 == true) {
+                        var refC2 = userRef.child(childSnapshot.key());
+                        refC2.set({
+                            Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                            Response1: childSnapshot.child('Response1').val(),
+                            Question: childSnapshot.child('Question').val(),
+                            Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                            Response2: childSnapshot.child('Response2').val(),
+                            Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                            Response3: childSnapshot.child('Response3').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: childSnapshot.child("counterR1").val(),
+                            counterR2: 0,
+                            counterR3: childSnapshot.child("counterR3").val()
+                        });
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "The question has been deleted. Please refresh to view other questions or create another poll! ";
+                        resp.appendChild(header);
+
+                        show.style.visibility = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+                    }
+                }
+                resetCount3.onclick = function() {
+                    var c3 = confirm("Are you sure?");
+                    if( c3 == true) {
+                        var refC3 = userRef.child(childSnapshot.key());
+                        refC3.set({
+                            Follow_Up3: childSnapshot.child('Follow_Up3').val(),
+                            Response1: childSnapshot.child('Response1').val(),
+                            Question: childSnapshot.child('Question').val(),
+                            Follow_Up1: childSnapshot.child('Follow_Up1').val(),
+                            Response2: childSnapshot.child('Response2').val(),
+                            Follow_Up2: childSnapshot.child('Follow_Up2').val(),
+                            Response3: childSnapshot.child('Response3').val(),
+                            isActive: childSnapshot.child('isActive').val(),
+                            counterR1: childSnapshot.child("counterR1").val(),
+                            counterR2: childSnapshot.child("counterR3").val(),
+                            counterR3: 0
+                        });
+                        document.getElementById("viewAll").innerHTML = '';
+                        var resp = document.getElementById("viewAll");
+                        var header = document.createElement("h4");
+                        header.innerHTML = "The question has been deleted. Please refresh to view other questions or create another poll! ";
+                        resp.appendChild(header);
+
+                        show.style.visibility = "hidden";
+                        document.getElementById("content").style.visibility = "hidden";
+                    }
+                }
+        });
+    })
+    }
+</script>
+<div id="questions">
+
+</div>
+<div id="viewAll">
+
+</div>
+
+<h4 id="show"> Record your updated content in the input box below. </h4>
+<div id="update">
+</div>
+
+</body>
+
+<script>
+    var show = document.getElementById("show");
+    show.style.visibility = "hidden";
+</script>
+<script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyDn_8TdtRAV6lbgeqVi6UIaawT7mJMP6MQ",
+        authDomain: "speedpoll-1fd08.firebaseapp.com",
+        databaseURL: "https://speedpoll-1fd08.firebaseio.com",
+        storageBucket: "",
+        messagingSenderId: "660277309630"
+    };
+    firebase.initializeApp(config);
+    var Firebase = require("firebase");
+</script>
+</html>
